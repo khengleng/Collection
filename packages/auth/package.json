@@ -1,0 +1,19 @@
+{
+  "name": "@collection/auth",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@nestjs/passport": "^10.0.0",
+    "passport-jwt": "^4.0.0",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/passport-jwt": "^3.0.0"
+  }
+}

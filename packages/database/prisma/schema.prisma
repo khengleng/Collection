@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+  debtors   Debtor[]
+  accounts  Account[]
+  cases     Case[]
+  events    Event[]
+  auditLogs AuditLog[]
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  permissions Json
+  users       User[]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  password  String
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  roleId    String
+  role      Role     @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Debtor {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  firstName String
+  lastName  String
+  contacts  DebtorContact[]
+  accounts  Account[]
+  cases     Case[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DebtorContact {
+  id        String   @id @default(uuid())
+  debtorId  String
+  debtor    Debtor   @relation(fields: [debtorId], references: [id])
+  type      String   // email, phone, address
+  value     String
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id               String   @id @default(uuid())
+  tenantId         String
+  tenant           Tenant   @relation(fields: [tenantId], references: [id])
+  debtorId         String
+  debtor           Debtor   @relation(fields: [debtorId], references: [id])
+  externalId       String   // Fineract ID
+  accountNumber    String
+  currentBalance   Decimal  @db.Decimal(19, 4)
+  currency         String   @default("USD")
+  status           String   // active, delinquent, closed
+  delinquentSince  DateTime?
+  cases            Case[]
+  payments         Payment[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  externalMapping ExternalAccountMapping?
+}
+
+model Case {
+  id             String   @id @default(uuid())
+  tenantId       String
+  tenant         Tenant   @relation(fields: [tenantId], references: [id])
+  debtorId       String
+  debtor         Debtor   @relation(fields: [debtorId], references: [id])
+  accountId      String
+  account        Account  @relation(fields: [accountId], references: [id])
+  status         String   // OPEN, CLOSED, ESCALATED, etc
+  assignedTo     String?
+  promises       Promise[]
+  communications Communication[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Payment {
+  id         String   @id @default(uuid())
+  accountId  String
+  account    Account  @relation(fields: [accountId], references: [id])
+  amount     Decimal  @db.Decimal(19, 4)
+  currency   String
+  status     String   // PENDING, COMPLETED, FAILED
+  externalId String?  // ID from payment provider
+  createdAt  DateTime @default(now())
+}
+
+model Promise {
+  id            String   @id @default(uuid())
+  caseId        String
+  case          Case     @relation(fields: [caseId], references: [id])
+  amount        Decimal  @db.Decimal(19, 4)
+  dueDate       DateTime
+  status        String   // KEPT, BROKEN, PENDING
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Communication {
+  id        String   @id @default(uuid())
+  caseId    String
+  case      Case     @relation(fields: [caseId], references: [id])
+  type      String   // SMS, EMAIL, CALL
+  status    String   // REQUESTED, SENT, FAILED
+  content   String?
+  sentAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+model WorkflowDefinition {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  versions    WorkflowVersion[]
+}
+
+model WorkflowVersion {
+  id           String   @id @default(uuid())
+  definitionId String
+  definition   WorkflowDefinition @relation(fields: [definitionId], references: [id])
+  version      String
+  config       Json
+  isActive     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  name      String   // payment.missed, etc
+  payload   Json
+  source    String   // system, fineract, user
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  userId    String?
+  action    String
+  resource  String
+  resourceId String?
+  payload   Json?
+  createdAt DateTime @default(now())
+}
+
+model ExternalAccountMapping {
+  id             String   @id @default(uuid())
+  accountId      String   @unique
+  account        Account  @relation(fields: [accountId], references: [id])
+  provider       String   // fineract
+  externalId     String
+  syncMetadata   Json?
+  lastSyncedAt   DateTime @default(now())
+}
+
+model SyncRun {
+  id             String   @id @default(uuid())
+  provider       String
+  status         String   // started, completed, failed
+  startedAt      DateTime @default(now())
+  completedAt    DateTime?
+  stats          Json?
+}
