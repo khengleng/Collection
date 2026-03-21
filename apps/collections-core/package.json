@@ -22,7 +22,8 @@
     "rxjs": "^7.8.1",
     "@collection/shared-types": "workspace:*",
     "@collection/database": "workspace:*",
-    "@collection/event-contracts": "workspace:*"
+    "@collection/event-contracts": "workspace:*",
+    "@temporalio/client": "^1.8.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

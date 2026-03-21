@@ -51,5 +51,34 @@ services:
     depends_on:
       - temporal
 
+  # Fineract Source of Truth
+  fineract-db:
+    image: mariadb:10.6
+    container_name: collection_fineract_db
+    environment:
+      - MARIADB_ROOT_PASSWORD=mysql
+      - MARIADB_DATABASE=fineract_default
+      - MARIADB_USER=fineract
+      - MARIADB_PASSWORD=fineract
+    ports:
+      - "3306:3306"
+    volumes:
+      - fineract_db_data:/var/lib/mysql
+
+  fineract:
+    image: apache/fineract:latest
+    container_name: collection_fineract_server
+    ports:
+      - "8443:8443"
+    environment:
+      - FINERACT_DEFAULT_TENANTDB_HOSTNAME=fineract-db
+      - FINERACT_DEFAULT_TENANTDB_PORT=3306
+      - FINERACT_DEFAULT_TENANTDB_UID=fineract
+      - FINERACT_DEFAULT_TENANTDB_PWD=fineract
+      - FINERACT_DEFAULT_TENANTDB_CONN_STR=jdbc:mysql://fineract-db:3306/fineract_default
+    depends_on:
+      - fineract-db
+
 volumes:
   postgres_data:
+  fineract_db_data:
