@@ -1,0 +1,11 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "apps/fineract/Dockerfile"
+  },
+  "deploy": {
+    "healthcheckPath": "/fineract-provider/api/v1/health",
+    "healthcheckTimeout": 600
+  }
+}

@@ -4,8 +4,8 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "node apps/workflow-worker/dist/main",
-    "healthcheckPath": "/health",
+    "startCommand": "node apps/api-gateway/dist/main",
+    "healthcheckPath": "/api/v1/health",
     "healthcheckTimeout": 100
   }
 }
