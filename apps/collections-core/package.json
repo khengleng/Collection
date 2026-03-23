@@ -23,6 +23,7 @@
     "@collection/shared-types": "workspace:*",
     "@collection/database": "workspace:*",
     "@collection/event-contracts": "workspace:*",
+    "@collection/temporal-contracts": "workspace:*",
     "@temporalio/client": "^1.8.0"
   },
   "devDependencies": {

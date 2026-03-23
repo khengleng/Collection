@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TemporalService implements OnModuleInit, OnModuleDestroy {
-  private client: Client;
-  private connection: Connection;
+  private client!: Client;
+  private connection!: Connection;
   private readonly logger = new Logger(TemporalService.name);
 
   constructor(private readonly configService: ConfigService) {}

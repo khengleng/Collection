@@ -10,7 +10,7 @@ export class AccountsController {
   @Get()
   @ApiOperation({ summary: 'Get all accounts for the tenant' })
   @ApiResponse({ status: 200, description: 'Return all accounts.' })
-  async findAll(@Request() req) {
+  async findAll(@Request() req: any) {
     const tenantId = req.user?.tenantId || 'test-tenant-id';
     return this.accountsService.findAll(tenantId);
   }
@@ -18,7 +18,7 @@ export class AccountsController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a single account' })
   @ApiResponse({ status: 200, description: 'Return the account.' })
-  async findOne(@Param('id') id: string, @Request() req) {
+  async findOne(@Param('id') id: string, @Request() req: any) {
     const tenantId = req.user?.tenantId || 'test-tenant-id';
     return this.accountsService.findOne(id, tenantId);
   }
@@ -26,7 +26,7 @@ export class AccountsController {
   @Get('debtor/:debtorId')
   @ApiOperation({ summary: 'Get accounts for a specific debtor' })
   @ApiResponse({ status: 200, description: 'Return accounts for the debtor.' })
-  async findByDebtor(@Param('debtorId') debtorId: string, @Request() req) {
+  async findByDebtor(@Param('debtorId') debtorId: string, @Request() req: any) {
     const tenantId = req.user?.tenantId || 'test-tenant-id';
     return this.accountsService.findByDebtor(debtorId, tenantId);
   }

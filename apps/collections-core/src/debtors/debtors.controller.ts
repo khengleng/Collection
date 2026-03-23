@@ -10,7 +10,7 @@ export class DebtorsController {
   @Get()
   @ApiOperation({ summary: 'Get all debtors for the tenant' })
   @ApiResponse({ status: 200, description: 'Return all debtors.' })
-  async findAll(@Request() req) {
+  async findAll(@Request() req: any) {
     // tenantId should come from the user/tenant guard in a real app
     const tenantId = req.user?.tenantId || 'test-tenant-id';
     return this.debtorsService.findAll(tenantId);
@@ -19,7 +19,7 @@ export class DebtorsController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a single debtor' })
   @ApiResponse({ status: 200, description: 'Return the debtor.' })
-  async findOne(@Param('id') id: string, @Request() req) {
+  async findOne(@Param('id') id: string, @Request() req: any) {
     const tenantId = req.user?.tenantId || 'test-tenant-id';
     return this.debtorsService.findOne(id, tenantId);
   }
@@ -28,7 +28,7 @@ export class DebtorsController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new debtor' })
   @ApiResponse({ status: 201, description: 'The debtor has been successfully created.' })
-  async create(@Body() createDebtorDto: any, @Request() req) {
+  async create(@Body() createDebtorDto: any, @Request() req: any) {
     const tenantId = req.user?.tenantId || 'test-tenant-id';
     return this.debtorsService.create(createDebtorDto, tenantId);
   }

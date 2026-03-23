@@ -25,7 +25,7 @@ export class FineractService {
         }),
       );
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Error fetching loan ${loanId} from Fineract (tenant: ${tenantId}): ${error.message}`);
       throw error;
     }

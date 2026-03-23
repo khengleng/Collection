@@ -6,7 +6,7 @@ import { CollectionActivities } from './activities/collection.activities';
 
 @Injectable()
 export class WorkerService implements OnModuleInit, OnModuleDestroy {
-  private worker: Worker;
+  private worker!: Worker;
   private readonly logger = new Logger(WorkerService.name);
 
   constructor(
@@ -36,12 +36,12 @@ export class WorkerService implements OnModuleInit, OnModuleDestroy {
       });
 
       // Start the worker (non-blocking)
-      this.worker.run().catch((err) => {
+      this.worker.run().catch((err: any) => {
         this.logger.error('Worker run failed:', err);
       });
 
       this.logger.log(`Temporal Worker for missed-payment-queue started at ${address}`);
-    } catch (err) {
+    } catch (err: any) {
       this.logger.error('Failed to start Temporal worker:', err);
     }
   }

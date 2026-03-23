@@ -40,7 +40,7 @@ export class SyncService {
       });
 
       return { status: 'completed', syncCount: 1 };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Sync failed: ${error.message}`);
       throw error;
     }
